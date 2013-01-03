@@ -1,0 +1,4 @@
+#pygit2
+-e git+git://github.com/libgit2/pygit2.git#egg=pygit2
+Werkzeug
+simplejson
