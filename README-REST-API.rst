@@ -30,7 +30,7 @@ http://<host>:<port>/<repo> is omitted in the following documents.
     Creates a new branch.
     
     JSON request parameters:
-        target - sha1 hex of the target
+        * target - sha1 hex of the target
 
 **DELETE /branches/{name}**
 
@@ -45,31 +45,31 @@ http://<host>:<port>/<repo> is omitted in the following documents.
     Creates a new entry for the given branch and path.
 
     JSON request parameters:
-        sha1 - sha1 hex of the blob object
-        mode - file mode
-        author_name - author's name
-        author_email - author's email address
-        comment - commit message
+        * sha1 - sha1 hex of the blob object
+        * mode - file mode
+        * author_name - author's name
+        * author_email - author's email address
+        * comment - commit message
 
 **PUT /branches/{name}/{path}**
 
     Replaces the entry for the given branch and path.
 
     JSON request parameters:
-        sha1 - sha1 hex of the blob object
-        mode - file mode
-        author_name - author's name
-        author_email - author's email address
-        comment - commit message
+        * sha1 - sha1 hex of the blob object
+        * mode - file mode
+        * author_name - author's name
+        * author_email - author's email address
+        * comment - commit message
 
 **DELETE /branches/{name}/{path}**
 
     Deletes the entry for the given branch and path.
 
     JSON request parameters:
-        author_name - author's name
-        author_email - author's email address
-        comment - commit message
+        * author_name - author's name
+        * author_email - author's email address
+        * comment - commit message
 
 **GET /tags/**
 
@@ -80,7 +80,7 @@ http://<host>:<port>/<repo> is omitted in the following documents.
     Creates a new tag.
     
     JSON request parameters:
-        target - sha1 hex of the target
+        * target - sha1 hex of the target
 
 **DELETE /tags/{name}**
 
