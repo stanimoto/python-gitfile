@@ -1,4 +1,4 @@
-from pygit2 import *
+from pygit2 import GIT_OBJ_BLOB, GIT_OBJ_TREE, GIT_OBJ_COMMIT, GIT_OBJ_TAG
 import re
 import binascii
 
@@ -58,13 +58,16 @@ def entry_to_dict(entry):
         GIT_OBJ_TAG: 'tag',
     }[obj.type]
 
-    return {
+    d = {
         'name': entry.name,
         'sha1': entry.hex,
         'mode': oct(entry.filemode),
         'type': type,
         'size': len(obj.read_raw()),
     }
+    if type != 'blob':
+        del d['size']
+    return d
 
 
 def sha_hex2bin(sha):

@@ -24,7 +24,7 @@ setup(
     ],
     tests_require=['nose', 'unittest2', 'pep8'],
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.6',

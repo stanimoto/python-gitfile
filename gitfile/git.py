@@ -1,6 +1,6 @@
-from pygit2 import *
+from pygit2 import Repository, Signature
 import re
-from gitfile.exceptions import *
+from gitfile.exceptions import InvalidParamException
 from gitfile.utils import *
 
 DEFAULT_MODE_BLOB = 0o0100644
@@ -8,13 +8,27 @@ DEFAULT_MODE_TREE = 0o0040000
 
 
 class Git(object):
+    r"""
+    Interact with a git repository.
+    """
+
     def __init__(self, gitdir):
+        r"""
+        Take a path to the git repository. Other methods interact with
+        this git repository.
+        """
         self.repo = Repository(gitdir)
 
     def branches(self):
+        r"""
+        Return the list of a branch name and its last commit id.
+        """
         return self._refs('heads')
 
     def tags(self):
+        r"""
+        Return the list of a tag name and its last commit id.
+        """
         return self._refs('tags')
 
     def _refs(self, type):
@@ -28,6 +42,9 @@ class Git(object):
         return refs
 
     def create_branch(self, name, target):
+        r"""
+        Create new branch.
+        """
         if not is_valid_value(name):
             raise InvalidParamException("name is required")
         if not is_valid_hex(target):
@@ -42,6 +59,9 @@ class Git(object):
         return True
 
     def delete_branch(self, name):
+        r"""
+        Delete the branch for the given name.
+        """
         if not is_valid_value(name):
             raise InvalidParamException("name is required")
 
@@ -54,6 +74,9 @@ class Git(object):
         return True
 
     def create_content(self, content):
+        r"""
+        Create a new blob object and return the sha1 hex.
+        """
         if content is None:
             raise InvalidParamException('content is required')
 
@@ -62,6 +85,9 @@ class Git(object):
         return blob.hex
 
     def get_content(self, hex):
+        r"""
+        Return the raw content of the blob object for the given sha1.
+        """
         if not is_valid_hex(hex):
             raise InvalidParamException('hex is required')
         try:
@@ -75,6 +101,10 @@ class Git(object):
         return obj.read_raw()
 
     def find_entry(self, path, branch=None, tag=None):
+        r"""
+        Return the entry for the given path and on the given
+        branch/tag.
+        """
         if branch:
             entry = tree = self.branch_tree(branch)
         elif tag:
@@ -98,6 +128,9 @@ class Git(object):
 
     def create_entry(self, branch, path, sha1, mode=None,
                      author_name='', author_email='', comment=''):
+        r"""
+        Create a new file at the given path and return the commit id.
+        """
         if not is_valid_hex(sha1):
             raise InvalidParamException("sha1 is invalid")
 
@@ -184,6 +217,9 @@ class Git(object):
 
     def update_entry(self, branch, path, sha1, mode=None,
                      author_name='', author_email='', comment=''):
+        r"""
+        Update the file at the given path and return the commit id.
+        """
         if not is_valid_hex(sha1):
             raise InvalidParamException("sha1 is invalid")
 
@@ -256,6 +292,9 @@ class Git(object):
 
     def delete_entry(self, branch, path,
                      author_name='', author_email='', comment=''):
+        r"""
+        Delete the file for the given path and return the commit id.
+        """
         branch_tree = self.branch_tree(branch)
         committer = Signature(author_name, author_email)
 
@@ -314,6 +353,9 @@ class Git(object):
         return self.repo[commit].hex
 
     def create_tag(self, name, target):
+        r"""
+        Create a new tag.
+        """
         if not is_valid_value(name):
             raise InvalidParamException("name is required")
         if not is_valid_hex(target):
@@ -328,6 +370,9 @@ class Git(object):
         return True
 
     def delete_tag(self, name):
+        r"""
+        Delete the tag for the given name.
+        """
         if not is_valid_value(name):
             raise InvalidParamException("name is required")
 
@@ -340,6 +385,9 @@ class Git(object):
         return True
 
     def branch_tree(self, name):
+        r"""
+        Return the root node of the branch.
+        """
         try:
             ref = self.repo.lookup_reference('refs/heads/%s' % name)
         except Exception, e:
@@ -348,6 +396,9 @@ class Git(object):
         return commit.tree
 
     def tag_tree(self, name):
+        r"""
+        Return the root node of the tag.
+        """
         try:
             ref = self.repo.lookup_reference('refs/tags/%s' % name)
         except Exception, e:

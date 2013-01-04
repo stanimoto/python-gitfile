@@ -11,6 +11,14 @@ Features
 * Create/Delete tags
 * RESTful interface
 
+Dependencies
+------------
+
+* `libgit2 <http://libgit2.github.com/>`_
+* `pygit2 <http://github.com/libgit2/pygit2>`_
+* Werkzeug
+* simplejson
+
 Example API usage
 -----------------
 
@@ -122,11 +130,5 @@ To get a list of files in the root directory in the master branch ::
   }
 
         
-    
-Dependencies
-------------
 
-* `libgit2 <http://libgit2.github.com/>`_
-* `pygit2 <http://github.com/libgit2/pygit2>`_
-* Werkzeug
-* simplejson
+

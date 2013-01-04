@@ -126,6 +126,19 @@ class ApiTest(unittest.TestCase):
 
             entry = self.git.find_entry(path, branch='master')
             self.assertEqual(self.git.get_content(entry.hex), 'blah')
+            self.assertEqual(entry_to_dict(entry),
+                             {'name': entry.name,
+                              'sha1': entry.hex,
+                              'mode': oct(entry.filemode),
+                              'type': 'blob',
+                              'size': len('blah')})
+
+        entry = self.git.find_entry('/foo', branch='master')
+        self.assertEqual(entry_to_dict(entry),
+                         {'name': 'foo',
+                          'sha1': entry.hex,
+                          'mode': oct(entry.filemode),
+                          'type': 'tree'})
 
         path = '/test.txt'
         hex = self.git.create_content('blah')
