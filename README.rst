@@ -19,6 +19,20 @@ Dependencies
 * Werkzeug
 * simplejson
 
+Install
+-------
+
+::
+
+  $ ./install_libgit2.sh
+  $ virtualenv env --no-site-packages
+  $ export LIBGIT2=$PWD/env
+  $ env/bin/pip install -r requirements.txt -r requirements-test.txt
+  # this is weird...
+  $ ln -s env/lib/libgit2.0.17.0.dylib ./libgit2.0.dylib
+  $ env/bin/nosetests tests
+  $ env/bin/python app.wsgi
+
 Example API usage
 -----------------
 
