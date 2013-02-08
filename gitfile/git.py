@@ -135,7 +135,7 @@ class Git(object):
             raise InvalidParamException("sha1 is invalid")
 
         try:
-            self.repo[sha_hex2bin(sha1)]
+            obj = self.repo[sha_hex2bin(sha1)]
         except KeyError, e:
             raise InvalidParamException(
                 "No blob found for the given id: " + sha1)
@@ -172,9 +172,15 @@ class Git(object):
                     'oid': new_tree_oid,
                 }
             else:
+                if mode is None:
+                    if obj.type == GIT_OBJ_BLOB:
+                        mode = DEFAULT_MODE_BLOB
+                    elif obj.type == GIT_OBJ_TREE:
+                        mode = DEFAULT_MODE_TREE
+
                 new_entry = {
                     'name': filename,
-                    'filemode': mode if mode else DEFAULT_MODE_BLOB,
+                    'filemode': mode,
                     'oid': sha_hex2bin(sha1),
                 }
 
