@@ -2,7 +2,6 @@ from setuptools import setup
 from gitfile import __version__ as version
 
 
-# Set "LIBGIT2" env var to refer to your own libgit2 build
 setup(
     name='GitFile',
     version=version,
@@ -13,16 +12,12 @@ setup(
     url='http://github.com/stanimoto/python-gitfile',
     packages=['gitfile'],
     license='BSD',
-    dependency_links=[
-        #'http://github.com/libgit2/libgit2/tarball/development',
-        'http://github.com/libgit2/pygit2/tarball/master#egg=pygit2',
-    ],
+    dependency_links=[],
     install_requires=[
         'pygit2',
         'Werkzeug',
-        'simplejson',
     ],
-    tests_require=['nose', 'unittest2', 'pep8'],
+    tests_require=['unittest2', 'nose', 'pep8'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',

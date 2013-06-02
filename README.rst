@@ -1,7 +1,7 @@
 gitfile - Git as a versioned file system and its RESTful interface
 ==================================================================
 
-gitfile is a wrapper to Git and allows to edit files without checking out a repository. This library is in an alpha state and is dependent on the development branch of libgit2, and the master branch of pygit2.
+gitfile is a wrapper to Git and allows to edit files without checking out a repository. This library is in an alpha state.
 
 Features
 --------
@@ -17,19 +17,14 @@ Dependencies
 * `libgit2 <http://libgit2.github.com/>`_
 * `pygit2 <http://github.com/libgit2/pygit2>`_
 * Werkzeug
-* simplejson
 
 Install
 -------
 
 ::
 
-  $ ./install_libgit2.sh
   $ virtualenv env --no-site-packages
-  $ export LIBGIT2=$PWD/env
   $ env/bin/pip install -r requirements.txt -r requirements-test.txt
-  # this is weird...
-  $ ln -s env/lib/libgit2.0.17.0.dylib ./libgit2.0.dylib
   $ env/bin/nosetests tests
   $ env/bin/python app.wsgi
 

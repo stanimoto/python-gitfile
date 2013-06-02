@@ -2,7 +2,7 @@ from gitfile.git import *
 from gitfile.utils import *
 from gitfile.exceptions import *
 import werkzeug.exceptions as ex
-import simplejson as json
+import json
 
 
 class RESTHandler(object):

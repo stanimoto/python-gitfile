@@ -1,7 +1,7 @@
 import unittest
 import testutil
 import os
-import simplejson as json
+import json
 from werkzeug.test import Client
 from werkzeug.wrappers import BaseResponse
 from gitfile.git import *

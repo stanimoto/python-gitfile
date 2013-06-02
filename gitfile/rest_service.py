@@ -1,7 +1,7 @@
 from werkzeug.wrappers import Request, Response
 import werkzeug.exceptions as ex
 import os
-import simplejson as json
+import json
 from gitfile.git import *
 from gitfile.rest_handler import *
 
