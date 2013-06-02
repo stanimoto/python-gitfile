@@ -100,7 +100,7 @@ class Git(object):
 
         return obj.read_raw()
 
-    def find_entry(self, path, branch=None, tag=None):
+    def find_entry(self, path, branch=None, tag=None, commit=None):
         r"""
         Return the entry for the given path and on the given
         branch/tag.
@@ -109,6 +109,8 @@ class Git(object):
             entry = tree = self.branch_tree(branch)
         elif tag:
             entry = tree = self.tag_tree(tag)
+        elif commit:
+            entry = tree = self.commit_tree(commit)
         else:
             raise InvalidParamException('branch or tag is required')
 
@@ -411,3 +413,12 @@ class Git(object):
             raise InvalidParamException(str(e))
         tag = self.repo[ref.oid]
         return tag.tree
+
+    def commit_tree(self, hex_):
+        r"""
+        Return the root node of the commit.
+        """
+        if not is_valid_hex(hex_):
+            raise InvalidParamException('hex is required')
+        commit = self.repo[sha_hex2bin(hex_)]
+        return commit.tree

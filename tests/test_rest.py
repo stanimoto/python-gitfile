@@ -240,3 +240,29 @@ class RESTServiceTest(unittest.TestCase):
         res = self.client.get('/foo/tags')
         self.assertEqual(json.loads(res.data)['result']['entries'].keys(),
                          ['tag2'])
+
+    def test_commit(self):
+        # update 'file1' twice
+        contents = ('foo', 'bar')
+        commits = []
+        for content in contents:
+            res = self.client.post('/foo/blobs', data=content)
+            sha1 = json.loads(res.data)['result']['sha1']
+            res = self.client.post(
+                '/foo/branches/master/file1',
+                data=json.dumps({
+                    'sha1': sha1,
+                    'author_name': 'foo',
+                    'author_email': 'foo@example.com',
+                })
+            )
+            res = self.client.get('/foo/branches/master')
+            commit = json.loads(res.data)['result']['sha1']
+            commits.append(commit)
+
+        for i, commit in enumerate(commits):
+            res = self.client.get('/foo/commits/%s/file1' % commit)
+            sha1 = json.loads(res.data)['result']['sha1']
+            res = self.client.get('/foo/blobs/%s' % sha1)
+            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res.data, contents[i], 'correct object fetched')

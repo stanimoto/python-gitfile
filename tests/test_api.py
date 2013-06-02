@@ -251,5 +251,25 @@ class ApiTest(unittest.TestCase):
         self.assertTrue(self.git.delete_tag('tag2'))
         self.assertEqual(self.git.tags().keys(), [])
 
+    def test_commits(self):
+        path = '/foobar.txt'
+
+        commits = []
+        for content in ('foo', 'bar'):
+            hex = self.git.create_content(content)
+            target = self.git.create_entry(
+                'master', path, hex,
+                author_name='foo', author_email='foo@example.com'
+            )
+            self.assertTrue(target)
+            commits.append(target)
+
+        entry = self.git.find_entry(path, commit=commits[0])
+        self.assertEqual(self.git.get_content(entry.hex), 'foo')
+
+        entry = self.git.find_entry(path, commit=commits[1])
+        self.assertEqual(self.git.get_content(entry.hex), 'bar')
+
+
 if __name__ == '__main__':
     unittest.main()

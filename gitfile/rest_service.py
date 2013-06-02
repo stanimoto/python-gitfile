@@ -64,7 +64,7 @@ class RESTService(object):
             response = Response(body, status=status[0], mimetype=content_type)
         except ex.HTTPException, e:
             return self.error_response(e)
-        except json.JSONDecodeError, e:
+        except ValueError, e:
             return self.error_response(ex.BadRequest(str(e)))
         except Exception, e:
             return self.error_response(ex.InternalServerError(str(e)))

@@ -89,3 +89,7 @@ http://<host>:<port>/<repo> is omitted in the following documents.
 **GET /tags/{name}/{path}**
 
     Returns the entry info for the given tag and path.
+
+**GET /commits/{sha1}/{path}**
+
+    Returns the entry info for the given branch and path.

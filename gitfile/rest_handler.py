@@ -177,3 +177,25 @@ class Tags(NounHandler):
             return d
         else:
             raise ex.NotFound('File does not exist in %s tag' % tag)
+
+
+class Commits(NounHandler):
+    def handle_get(self, sha1, paths):
+        commit_tree = self.git.commit_tree(sha1)
+        return {
+            'name': sha1,
+            'type': 'commit',
+            'sha1': sha1,
+            'entries': [entry_to_dict(x) for x in commit_tree],
+        }
+
+    def handle_get_file(self, sha1, paths):
+        entry = self.git.find_entry('/'.join(paths), commit=sha1)
+        if entry:
+            d = entry_to_dict(entry)
+            if d['type'] == 'tree':
+                entries = [entry_to_dict(x) for x in entry.to_object()]
+                d['entries'] = entries
+            return d
+        else:
+            raise ex.NotFound('File does not exist in %s commit' % sha1)
