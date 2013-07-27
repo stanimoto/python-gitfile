@@ -1,4 +1,4 @@
-from pygit2 import Repository, Signature
+from pygit2 import Repository, Signature, Oid
 import re
 from gitfile.exceptions import InvalidParamException
 from gitfile.utils import *
@@ -38,7 +38,7 @@ class Git(object):
             m = pattern.match(ref)
             if m:
                 reference = self.repo.lookup_reference(ref)
-                refs[m.group(1)] = reference.hex
+                refs[m.group(1)] = reference.target.hex
         return refs
 
     def create_branch(self, name, target):
@@ -50,7 +50,7 @@ class Git(object):
         if not is_valid_hex(target):
             raise InvalidParamException("target is required")
 
-        target = sha_hex2bin(target)
+        target = Oid(hex=target)
         try:
             self.repo.create_reference('refs/heads/%s' % name, target)
         except Exception, e:
@@ -91,7 +91,7 @@ class Git(object):
         if not is_valid_hex(hex):
             raise InvalidParamException('hex is required')
         try:
-            obj = self.repo[sha_hex2bin(hex)]
+            obj = self.repo[Oid(hex=hex)]
         except KeyError, e:
             return None
 
@@ -124,7 +124,7 @@ class Git(object):
                     break
             if entry is None:
                 return None
-            tree = entry.to_object()
+            tree = self.repo[entry.oid]
 
         return entry
 
@@ -137,7 +137,7 @@ class Git(object):
             raise InvalidParamException("sha1 is invalid")
 
         try:
-            obj = self.repo[sha_hex2bin(sha1)]
+            obj = self.repo[Oid(hex=sha1)]
         except KeyError, e:
             raise InvalidParamException(
                 "No blob found for the given id: " + sha1)
@@ -157,7 +157,7 @@ class Git(object):
             else:
                 entry = self.find_entry(dir_path, branch=branch)
                 if entry:
-                    dir_tree = entry.to_object()
+                    dir_tree = self.repo[entry.oid]
 
             new_entry = None
             old_entry = None
@@ -183,7 +183,7 @@ class Git(object):
                 new_entry = {
                     'name': filename,
                     'filemode': mode,
-                    'oid': sha_hex2bin(sha1),
+                    'oid': Oid(hex=sha1),
                 }
 
             tb = self.repo.TreeBuilder()
@@ -219,7 +219,7 @@ class Git(object):
             committer,
             comment,
             new_tree_oid,
-            [parent.oid],
+            [parent.target],
         )
         return self.repo[commit].hex
 
@@ -232,7 +232,7 @@ class Git(object):
             raise InvalidParamException("sha1 is invalid")
 
         try:
-            self.repo[sha_hex2bin(sha1)]
+            self.repo[Oid(hex=sha1)]
         except KeyError, e:
             raise InvalidParamException("sha1 is invalid")
 
@@ -246,7 +246,7 @@ class Git(object):
         new_tree_hex = None
         for dir_path in dirs:
             dir_tree = branch_tree if dir_path == '/' \
-                else self.find_entry(dir_path, branch=branch).to_object()
+                else self.repo[self.find_entry(dir_path, branch=branch).oid]
 
             new_entry = None
             old_entry = None
@@ -269,7 +269,7 @@ class Git(object):
                 new_entry = {
                     'name': filename,
                     'filemode': mode if mode else old_entry.filemode,
-                    'oid': sha_hex2bin(sha1) if sha1 else old_entry.oid,
+                    'oid': Oid(hex=sha1) if sha1 else old_entry.oid,
                 }
 
             tb = self.repo.TreeBuilder()
@@ -294,7 +294,7 @@ class Git(object):
             committer,
             comment,
             new_tree_oid,
-            [parent.oid],
+            [parent.target],
         )
         return self.repo[commit].hex
 
@@ -313,7 +313,7 @@ class Git(object):
         new_tree_hex = None
         for dir_path in dirs:
             dir_tree = branch_tree if dir_path == '/' \
-                else self.find_entry(dir_path, branch=branch).to_object()
+                else self.repo[self.find_entry(dir_path, branch=branch).oid]
 
             new_entry = None
             old_entry = None
@@ -356,7 +356,7 @@ class Git(object):
             committer,
             comment,
             new_tree_oid,
-            [parent.oid],
+            [parent.target],
         )
         return self.repo[commit].hex
 
@@ -369,7 +369,7 @@ class Git(object):
         if not is_valid_hex(target):
             raise InvalidParamException("target is invalid")
 
-        target = sha_hex2bin(target)
+        target = Oid(hex=target)
         try:
             self.repo.create_reference('refs/tags/%s' % name, target)
         except Exception, e:
@@ -400,7 +400,7 @@ class Git(object):
             ref = self.repo.lookup_reference('refs/heads/%s' % name)
         except Exception, e:
             raise InvalidParamException(str(e))
-        commit = self.repo[ref.oid]
+        commit = self.repo[ref.target]
         return commit.tree
 
     def tag_tree(self, name):
@@ -411,7 +411,7 @@ class Git(object):
             ref = self.repo.lookup_reference('refs/tags/%s' % name)
         except Exception, e:
             raise InvalidParamException(str(e))
-        tag = self.repo[ref.oid]
+        tag = self.repo[ref.target]
         return tag.tree
 
     def commit_tree(self, hex_):
@@ -420,5 +420,5 @@ class Git(object):
         """
         if not is_valid_hex(hex_):
             raise InvalidParamException('hex is required')
-        commit = self.repo[sha_hex2bin(hex_)]
+        commit = self.repo[Oid(hex=hex_)]
         return commit.tree

@@ -1,6 +1,5 @@
 from pygit2 import GIT_OBJ_BLOB, GIT_OBJ_TREE, GIT_OBJ_COMMIT, GIT_OBJ_TAG
 import re
-import binascii
 
 HEX_RE = re.compile(r'^[0-9a-f]{40}$')
 
@@ -48,8 +47,8 @@ def make_dir_paths(path):
     return dirs
 
 
-def entry_to_dict(entry):
-    obj = entry.to_object()
+def entry_to_dict(entry, repo):
+    obj = repo[entry.oid]
 
     type = {
         GIT_OBJ_BLOB: 'blob',
@@ -68,7 +67,3 @@ def entry_to_dict(entry):
     if type != 'blob':
         del d['size']
     return d
-
-
-def sha_hex2bin(sha):
-    return binascii.unhexlify(sha.encode('ascii'))

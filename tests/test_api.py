@@ -5,6 +5,7 @@ import testutil
 from gitfile.git import *
 from gitfile.exceptions import *
 from gitfile.utils import *
+from pygit2 import Oid
 
 
 class ApiTest(unittest.TestCase):
@@ -122,11 +123,11 @@ class ApiTest(unittest.TestCase):
                                                author_name='foo',
                                                author_email='foo@example.com')
             self.assertTrue(commit_hex, 'path exists now')
-            self.assertTrue(self.git.repo[sha_hex2bin(commit_hex)])
+            self.assertTrue(self.git.repo[Oid(hex=commit_hex)])
 
             entry = self.git.find_entry(path, branch='master')
             self.assertEqual(self.git.get_content(entry.hex), 'blah')
-            self.assertEqual(entry_to_dict(entry),
+            self.assertEqual(entry_to_dict(entry, self.git.repo),
                              {'name': entry.name,
                               'sha1': entry.hex,
                               'mode': oct(entry.filemode),
@@ -134,7 +135,7 @@ class ApiTest(unittest.TestCase):
                               'size': len('blah')})
 
         entry = self.git.find_entry('/foo', branch='master')
-        self.assertEqual(entry_to_dict(entry),
+        self.assertEqual(entry_to_dict(entry, self.git.repo),
                          {'name': 'foo',
                           'sha1': entry.hex,
                           'mode': oct(entry.filemode),

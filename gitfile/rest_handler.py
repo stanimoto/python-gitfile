@@ -67,7 +67,7 @@ class Branches(NounHandler):
             'name': branch,
             'type': 'branch',
             'sha1': sha1,
-            'entries': [entry_to_dict(x) for x in branch_tree],
+            'entries': [entry_to_dict(x, self.git.repo) for x in branch_tree],
         }
 
     def handle_post(self, branch, paths):
@@ -87,9 +87,12 @@ class Branches(NounHandler):
     def handle_get_file(self, branch, paths):
         entry = self.git.find_entry('/'.join(paths), branch=branch)
         if entry:
-            d = entry_to_dict(entry)
+            d = entry_to_dict(entry, self.git.repo)
             if d['type'] == 'tree':
-                entries = [entry_to_dict(x) for x in entry.to_object()]
+                entries = [
+                    entry_to_dict(x, self.git.repo)
+                    for x in self.git.repo[entry.oid]
+                ]
                 d['entries'] = entries
             return d
         else:
@@ -150,7 +153,9 @@ class Tags(NounHandler):
             'name': tag,
             'type': 'tag',
             'sha1': sha1,
-            'entries': [entry_to_dict(x) for x in tag_tree],
+            'entries': [
+                entry_to_dict(x, self.git.repo) for x in tag_tree
+            ],
         }
 
     def handle_post(self, tag, paths):
@@ -170,9 +175,12 @@ class Tags(NounHandler):
     def handle_get_file(self, tag, paths):
         entry = self.git.find_entry('/'.join(paths), tag=tag)
         if entry:
-            d = entry_to_dict(entry)
+            d = entry_to_dict(entry, self.git.repo)
             if d['type'] == 'tree':
-                entries = [entry_to_dict(x) for x in entry.to_object()]
+                entries = [
+                    entry_to_dict(x, self.git.repo)
+                    for x in self.git.repo[entry.oid]
+                ]
                 d['entries'] = entries
             return d
         else:
@@ -186,15 +194,18 @@ class Commits(NounHandler):
             'name': sha1,
             'type': 'commit',
             'sha1': sha1,
-            'entries': [entry_to_dict(x) for x in commit_tree],
+            'entries': [entry_to_dict(x, self.git.repo) for x in commit_tree],
         }
 
     def handle_get_file(self, sha1, paths):
         entry = self.git.find_entry('/'.join(paths), commit=sha1)
         if entry:
-            d = entry_to_dict(entry)
+            d = entry_to_dict(entry, self.git.repo)
             if d['type'] == 'tree':
-                entries = [entry_to_dict(x) for x in entry.to_object()]
+                entries = [
+                    entry_to_dict(x, self.git.repo)
+                    for x in self.git.repo[entry.oid]
+                ]
                 d['entries'] = entries
             return d
         else:
